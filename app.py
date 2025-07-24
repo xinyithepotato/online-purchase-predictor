@@ -62,6 +62,12 @@ if uploaded_file:
 
     # 🧾 Output predictions
     st.subheader("🔍 Predictions:")
+    purchase = 0
+    for i,pred in enumerate(predictions):
+        if pred == 1:
+            purchase += 1
+    st.write(f"Total number of purchases: {purchase}")
+    
     for i, pred in enumerate(predictions):
         st.write(f"Row {i + 1}: {'🟢 Will Purchase' if pred == 1 else '🔴 Will Not Purchase'}")
 
