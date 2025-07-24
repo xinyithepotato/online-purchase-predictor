@@ -31,11 +31,30 @@ if uploaded_file:
     st.subheader("📄 Uploaded Data Preview")
     st.write(df.head())
 
-    # 💡 Perform same preprocessing here as during training
-    # You MUST do one-hot encoding, imputation, scaling, etc., if used during training
-    df_encoded = pd.get_dummies(df)  # Simple one-hot example
+    df_fe = df.copy()
+    df_fe['SessionDuration'] = (
+        df_fe['Administrative_Duration'] +
+        df_fe['Informational_Duration'] +
+        df_fe['ProductRelated_Duration']
+    )
+    df_fe['TotalPagesVisited'] = (
+        df_fe['Administrative'] +
+        df_fe['Informational'] +
+        df_fe['ProductRelated']
+    )
+    df_fe['EngagementRate'] = df_fe['PageValues'] / df_fe['TotalPagesVisited']
+    df_fe['EngagementRate'].replace([float('inf'), -float('inf')], 0, inplace=True)
+    df_fe['EngagementRate'].fillna(0, inplace=True)
+    df_fe['ExitBounceDiff'] = df_fe['ExitRates'] - df_fe['BounceRates']
+    df_fe['TimePerPage'] = df_fe['SessionDuration'] / df_fe['TotalPagesVisited']
+    df_fe['TimePerPage'].replace([float('inf'), -float('inf')], 0, inplace=True)
+    df_fe['TimePerPage'].fillna(0, inplace=True)
 
-    # Align features to match the model's expected input
+    if "Revenue" in df_fe.columns:
+        df_fe.drop(columns=["Revenue"], inplace=True)
+
+    df_encoded = pd.get_dummies(df_fe, columns=["Month", "VisitorType"], drop_first=True)
+
     df_encoded = df_encoded.reindex(columns=expected_features, fill_value=0)
 
     # Make predictions
