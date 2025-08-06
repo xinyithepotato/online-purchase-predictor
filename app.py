@@ -18,7 +18,7 @@ model = joblib.load('catboost_model.pkl')
 expected_features = joblib.load('model_features.pkl')
 
 st.set_page_config(page_title="Online Purchase Prediction (CatBoost)", page_icon="🛒")
-st.title("🛍️ Predict Online Purchase Intention")
+st.title("🛍️ Predict Online Purchase Intention (Cat Boost)")
 
 st.markdown("Upload your CSV file containing user behavior data:")
 
